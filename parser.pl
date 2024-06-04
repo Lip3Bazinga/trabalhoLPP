@@ -1,8 +1,9 @@
-:- consult('is_op.pl'). 
+% operacoes trigonometricas
+:- op(600, fy, 'sin').
+:- op(600, fy, 'cos').
+:- op(600, fy, 'tan').
 
-:- op(600, fy, 'sin'). % Define a precedência das operações básicas
-
-% operacoes basicas 
+% operacoes basicas
 :- op(500, yfx, '+'). 
 :- op(500, yfx, '-').
 :- op(400, yfx, '*').
@@ -10,55 +11,56 @@
 
 % exponenciacao
 :- op(300, yfx, '**').
+:- op(300, fy, 'log').
 
-% Operação unitárica, tal qual o sen(x) = z
 mono_operation(Term1, Result) :-
     parsing(Term1, Remainder),
     atom_concat(Remainder, ')', Result).
 
-% Operação com dois argumentos, tal qual x+y = z
 double_operation(Term1, Term2, Result) :-
-    parsing(Term1, Resto1), 
+    parsing(Term1, Resto1),
     parsing(Term2, Resto2),
     atom_concat(Resto1, ',', R1),
     atom_concat(R1, Resto2, R2),
     atom_concat(R2, ')', Result).
-
-parsing(Term, R) :-
-    (is_operation(Term); % Verifica se a operação está no formato de árvore
-    atomic(Term)), % Verifica se ela é um átomo
-    R = Term. % retorna o termo 
+% 
 
 parsing(sin(Term1), Result) :-
-    mono_operation(Term1, R), % verifica se tem um sin(_)
-    atom_concat('operacao(sin,', R, Result). % Concatena a operação e R para result
+    mono_operation(Term1, R),
+    atom_concat('operacao(sin,', R, Result).
+
+parsing(cos(Term1), Result) :-
+    mono_operation(Term1, R),
+    atom_concat('operacao(cos,', R, Result).
+
+parsing(tan(Term1), Result) :-
+    mono_operation(Term1, R),
+    atom_concat('operacao(tan,', R, Result).
 
 parsing(Term1 + Term2, Result) :-
-    double_operation(Term1, Term2, R), % Verifica se tem um x + y
-    atom_concat('operacao(soma,', R, Result). % Concatena a operaçõ e R para result
- 
-% Análogo a soma
+    double_operation(Term1, Term2, R),
+    atom_concat('operacao(soma,', R, Result).
+
 parsing(Term1 - Term2, Result) :-
     double_operation(Term1, Term2, R),
     atom_concat('operacao(subtracao,', R, Result).
-% Análogo a soma
+
 parsing(Term1 / Term2, Result) :-
     double_operation(Term1, Term2, R),
     atom_concat('operacao(divisao,', R, Result).
-% Análogo a soma
+
 parsing(Term1 * Term2, Result) :-
     double_operation(Term1, Term2, R),
     atom_concat('operacao(multiplicacao,', R, Result).
-% Análogo a soma
+
 parsing(Term1 ** Term2, Result) :-
     double_operation(Term1, Term2, R),
     atom_concat('operacao(elevado,', R, Result).
 
-
-
-% Identico ao de cima, contudo sem apresentar nada na tela
-
-
+parsing(log(Term1, Term2), Result) :-
+    double_operation(Term1, Term2, R),
+    atom_concat('operacao(log,', R, Result).   
+%
 
 silent_mono_operation(Term1, Result) :-
     silent_parsing(Term1, Remainder),
@@ -70,15 +72,20 @@ silent_double_operation(Term1, Term2, Result) :-
     atom_concat(Resto1, ',', R1),
     atom_concat(R1, Resto2, R2),
     atom_concat(R2, ')', Result).
-
-silent_parsing(Term, R) :-
-    (is_operation(Term);
-    atomic(Term)),
-    R = Term.
+% 
 
 silent_parsing(sin(Term1), Result) :-
     silent_mono_operation(Term1, R),
     atom_concat('silent_operacao(sin,', R, Result).
+
+silent_parsing(cos(Term1), Result) :-
+    silent_mono_operation(Term1, R),
+    atom_concat('silent_operacao(cos,', R, Result).
+    
+silent_parsing(tan(Term1), Result) :-
+    silent_mono_operation(Term1, R),
+    atom_concat('silent_operacao(tan,', R, Result).
+
 
 silent_parsing(Term1 + Term2, Result) :-
     silent_double_operation(Term1, Term2, R),
@@ -99,12 +106,31 @@ silent_parsing(Term1 * Term2, Result) :-
 silent_parsing(Term1 ** Term2, Result) :-
     silent_double_operation(Term1, Term2, R),
     atom_concat('silent_operacao(elevado,', R, Result).
-     
-% operacao(soma,1,2) =>  operacao(soma,1,2,R)
+
+silent_parsing(log(Term1, Term2), Result) :-
+    silent_double_operation(Term1, Term2, R),
+    atom_concat('silent_operacao(log,', R, Result).
+    
+% 
+
+:- discontiguous parsing/2.
+parsing(Term, R) :-
+    (   noop(Term);
+        atomic(Term)),
+    R = Term. 
+% 
+:- discontiguous silent_parsing/2.
+silent_parsing(Term, R) :-
+    (   noop(Term);
+        atomic(Term)),
+    R = Term. 
+% 
+
 prepare_tree(Tree, Resultado) :-
     !,
     atom_chars(Tree, Chars),
     append(Inicio, [_], Chars), % Separando a lista de caracteres em duas partes: Início (todos os caracteres exceto o último) e Último
     append(Inicio, [',', 'R', ')', '.'], NovosChars), % Adicionando 'ab' no final de Início
     atom_chars(Resultado, NovosChars). % Convertendo a lista de caracteres de volta para um átomo
+    
     
