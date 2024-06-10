@@ -1,0 +1,53 @@
+para se representar um expressao matematica se usa
+'#I(...)
+
+as variaveis algebricas sao passadas como quotes: 'a 'b 'c...
+tem as seguintes operacoes:
+
++ 
+- 
+* 
+/ 
+^ 
+
+sine    
+cosine  
+tg      
+
+arcsin  
+arccos  
+arctg   
+
+ln
+lg -> lg(base, logaritmando)
+
+
+utilizacao
+'#I( operacoes )
+
+apos isso se adiciona os parametros:
+(add-node-parameters tree-operation NIL              T)
+                        |            |               |      
+                    '#(...)    valor_padrao       se_vai_printar
+exemplo:
+
+(setf a'#I( sine('x+2)^'b ))
+(setf b (add-node-parameters a NIL NIL))
+(print (eval b))
+
+output:
+"sin(X+2)^B"
+
+
+exemplo2:
+
+(setf a'#I( sine('x+2)^'b ))
+(setf b (add-node-parameters a NIL T))       <- agora é T ao invez de NIL
+(print (eval b))
+
+output:
+"sin(X+2) != 0 ou B > 0" 
+"sin(X+2) >= 0 ou B e inteiro" 
+"sin(X+2)^B"
+
+

@@ -1,3 +1,7 @@
+% Alexandre Santato - 14555162
+% Filipe Pio Magalhães - 14756232
+% Henrique Bloemer Kulkamp - 14654041
+
 :- multifile operacao/4.
 :- multifile silent_operacao/4.
 
@@ -35,8 +39,10 @@ tangent_check(A) :-
     R \= pi/2. 
 
 tangent_check(A) :-
+    write('\e[36m'),
     write(A),
-    write(' != pi/2 + K*pi'),nl.
+    write(' != pi/2 + K*pi'),
+    write('\e[0m'),nl.
     
 tangent_silent_check(A) :-
     number(A),
