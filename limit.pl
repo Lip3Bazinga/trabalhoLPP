@@ -1,36 +1,66 @@
-:- consult('function.pl'). % importando o arquivo 'function.pl'
+:- consult('function.pl').
 
 
+% f(x) é continua
 limit(Function, A, Limit) :-
-    silent_apply(Function, A, Limit), % Chamada de função, se true corte e aplica na função
-    !,
-    apply(Function, A, Limit). 
+    silent_apply(Function, A, Limit),
+    write('\e[32mcondicoes para a funcao ser continua:\e[0m'),nl,
+    nl,
+    apply(Function, A, Limit),
+    nl,!. % corte verde
 
-limit(Function, A, Limit) :- % Se não for contínua (limite != chamada)
-    Tolerancia = (0.0001), % tolerância dos limites laterais
-    Exp_A1 is A+0.0000001, % Direita
-    Exp_A2 is A-0.0000001, % Esquerda
-    format(atom(Raw_A1), '~10f', [Exp_A1]), % Para direita não ficar em notação científica  
-    format(atom(Raw_A2), '~10f', [Exp_A2]), % Para esquerda não ficar em notação científica 
-    % Colocar parênteses no argumento do limite
-    atom_concat('(', Raw_A1, Temp1), 
+% f(x) não é continua
+limit(Function, A, Limit) :-
+    (   atom(A) 
+        -> (    
+            term_to_atom(Compound_A, A),
+            Exp_A1 is Compound_A+0.0000001,
+            Exp_A2 is Compound_A-0.0000001
+        )
+        ;   Exp_A1 is A+0.0000001,
+            Exp_A2 is A-0.0000001),    
+
+    Tolerancia = (0.0001),  
+    format(atom(Raw_A1), '~10f', [Exp_A1]),
+    format(atom(Raw_A2), '~10f', [Exp_A2]),
+
+
+    atom_concat('(', Raw_A1, Temp1),
     atom_concat(Temp1, ')', A1),
     atom_concat('(', Raw_A2, Temp2),
     atom_concat(Temp2, ')', A2),
-        
-    silent_apply(Function, A1, R1), %
-    silent_apply(Function, A2, R2), % 
+    
+    silent_apply(Function, A1, R1),!,
+    silent_apply(Function, A2, R2),
+    
+    !, % corte vermelho: se ter uma variavel livre em R1 ou R2, o limite depende da variavel
+    check_term(R1),
+    check_term(R2),
 
-    AbsDiff is abs(R1-R2), % Diferença dos limites laterais
-
-    % Verifica se está na tolerância
+    AbsDiff is abs(R1-R2),
 
     (   AbsDiff < Tolerancia ->
-        round_third_place((R1 + R2) / 2, Limit) % Tira a média e arredonda para 3 casas decimais
-    ;   Limit = 'Limite nao alcancado' 
-    ).
+        round_third_place((R1 + R2) / 2, Limit);
+        Limit = 'O Limite nao existe'
+    ),
+    nl,
+    !. % corte verde
 
 
-round_third_place(Number, Rounded) :- % Função que arredonda para 3 casas decimais
+check_term(Termo) :-
+    try_atom_chars(Termo, ListaCaracteres),  % Tenta converter o termo em uma lista de caracteres
+    check_chars(ListaCaracteres).            % Verifica se cada caractere é um átomo
+
+try_atom_chars(Termo, ListaCaracteres) :-
+    catch(atom_chars(Termo, ListaCaracteres), _, fail).
+
+% Predicado auxiliar para verificar se cada caractere é um átomo
+check_chars([]).                        % Caso base: lista vazia, retorna verdadeiro
+check_chars([Char|Resto]) :-
+    atom(Char),                         % Verifica se o caractere é um átomo
+    check_chars(Resto).                 % Verifica o restante da lista recursivamente
+    
+
+round_third_place(Number, Rounded) :-
     Rounded is round(Number * 1000) / 1000.
     
