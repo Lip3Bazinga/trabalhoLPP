@@ -1,7 +1,3 @@
-:- op(600, fy, 'asin').
-:- op(600, fy, 'acos').
-:- op(600, fy, 'atan').
-
 % operacoes trigonometricas
 :- op(600, fy, 'sin').
 :- op(600, fy, 'cos').
@@ -16,7 +12,6 @@
 % exponenciacao
 :- op(300, yfx, '**').
 :- op(300, fy, 'log').
-:- op(600, fy, 'ln').
 
 mono_operation(Term1, Result) :-
     parsing(Term1, Remainder),
@@ -42,18 +37,6 @@ parsing(tan(Term1), Result) :-
     mono_operation(Term1, R),
     atom_concat('operacao(tan,', R, Result).
 
-parsing(asin(Term1), Result) :-
-    mono_operation(Term1, R),
-    atom_concat('operacao(asin,', R, Result).
-
-parsing(acos(Term1), Result) :-
-    mono_operation(Term1, R),
-    atom_concat('operacao(acos,', R, Result).
-
-parsing(atan(Term1), Result) :-
-    mono_operation(Term1, R),
-    atom_concat('operacao(atan,', R, Result).
-
 parsing(Term1 + Term2, Result) :-
     double_operation(Term1, Term2, R),
     atom_concat('operacao(soma,', R, Result).
@@ -77,10 +60,6 @@ parsing(Term1 ** Term2, Result) :-
 parsing(log(Term1, Term2), Result) :-
     double_operation(Term1, Term2, R),
     atom_concat('operacao(log,', R, Result).   
-
-parsing(ln(Term1), Result) :-
-    mono_operation(Term1, R),
-    atom_concat('operacao(ln,', R, Result).
 %
 
 silent_mono_operation(Term1, Result) :-
@@ -107,17 +86,6 @@ silent_parsing(tan(Term1), Result) :-
     silent_mono_operation(Term1, R),
     atom_concat('silent_operacao(tan,', R, Result).
 
-silent_parsing(asin(Term1), Result) :-
-    silent_mono_operation(Term1, R),
-    atom_concat('silent_operacao(asin,', R, Result).
-
-silent_parsing(acos(Term1), Result) :-
-    silent_mono_operation(Term1, R),
-    atom_concat('silent_operacao(acos,', R, Result).
-
-silent_parsing(atan(Term1), Result) :-
-    silent_mono_operation(Term1, R),
-    atom_concat('silent_operacao(atan,', R, Result).
 
 silent_parsing(Term1 + Term2, Result) :-
     silent_double_operation(Term1, Term2, R),
@@ -142,20 +110,19 @@ silent_parsing(Term1 ** Term2, Result) :-
 silent_parsing(log(Term1, Term2), Result) :-
     silent_double_operation(Term1, Term2, R),
     atom_concat('silent_operacao(log,', R, Result).
-
-silent_parsing(ln(Term1), Result) :-
-    silent_mono_operation(Term1, R),
-    atom_concat('silent_operacao(ln,', R, Result).  
+    
 % 
 
 :- discontiguous parsing/2.
 parsing(Term, R) :-
-    atomic(Term),
+    (   noop(Term);
+        atomic(Term)),
     R = Term. 
 % 
 :- discontiguous silent_parsing/2.
 silent_parsing(Term, R) :-
-    atomic(Term),
+    (   noop(Term);
+        atomic(Term)),
     R = Term. 
 % 
 

@@ -1,9 +1,0 @@
-F = 1/cos(x) * log(2, x) + log(10, sin(3*x)) - tan(x)**2
-
-F = (x**5 - 3*x**2)/tan(log(10, 5-x)**x)
-
-F = x/sin(x) * log(2, x+2) + log(10, sin(3*x+45)) - tan(x)**2 - asin(x+28)**2
-
-F = (sin(x)/x)**(1/x**2)
-
-F = (cos(sin(x)) - cos(x))/x**4

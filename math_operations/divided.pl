@@ -32,10 +32,8 @@ check(divisao, _, B) :-
     B \= 0.0. 
 
 check(divisao, _, B) :-
-    write('\e[33m'),
     write(B),
-    write(' != 0'),
-    write('\e[0m'),nl.
+    write(' != 0'),nl.
     
 silent_check(divisao, _, B) :-
     number(B),

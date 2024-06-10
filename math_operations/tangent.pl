@@ -35,10 +35,8 @@ tangent_check(A) :-
     R \= pi/2. 
 
 tangent_check(A) :-
-    write('\e[36m'),
     write(A),
-    write(' != pi/2 + K*pi'),
-    write('\e[0m'),nl.
+    write(' != pi/2 + K*pi'),nl.
     
 tangent_silent_check(A) :-
     number(A),

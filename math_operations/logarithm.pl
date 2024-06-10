@@ -39,33 +39,28 @@ log_check(A, B) :-
     !,
     A > 0,
     A =\= 0,
-    write('\e[35m'),
+    
     write(B),
-    write(' > 0'),
-    write('\e[0m'),nl.
+    write(' > 0'),nl.
 
 % B e numero A nao
 log_check(A, B) :-
     number(B),
     !,
     B > 0,
-    write('\e[35m'),
     write(A),
     write(' > 0'),nl,
     write(A),
-    write(' != 1'),
-    write('\e[0m'),nl.
+    write(' != 1'),nl.
 
 % nem A nem B sao numeros
 log_check(A, B) :-
-    write('\e[35m'),
     write(B),
     write(' > 0'),nl,
     write(A),
     write(' > 0'),nl,
     write(A),
-    write(' != 1'),
-    write('\e[0m'),nl.
+    write(' != 1'),nl.
 
 silent_log_check(A, B) :-
     number(A),
